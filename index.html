@@ -15,15 +15,25 @@
             background-color: #ffebee;
             font-family: 'Arial', sans-serif;
             text-align: center;
+            overflow: hidden; /* Prevents scrollbars when button moves */
+        }
+
+        #content-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         h1 {
             color: #d32f2f;
-            font-size: 3rem;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
         }
 
         .buttons {
-            margin-top: 20px;
+            position: relative;
+            width: 100%;
+            height: 100px;
         }
 
         button {
@@ -32,44 +42,50 @@
             cursor: pointer;
             border: none;
             border-radius: 10px;
-            transition: transform 0.2s;
+            transition: all 0.2s ease;
         }
 
         #yesBtn {
             background-color: #4caf50;
             color: white;
-            margin-right: 20px;
+            z-index: 1;
         }
 
         #noBtn {
             background-color: #f44336;
             color: white;
-            position: absolute; /* Essential for the movement */
+            position: absolute;
         }
 
-        .container {
-            position: relative;
-            width: 100%;
-            height: 300px;
+        .celebrate-gif {
+            width: 250px;
+            border-radius: 15px;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
 
-    <h1>Will you be my Valentine? Swe ❤️</h1>
-    
-    <div class="container">
-        <button id="yesBtn" onclick="celebrate()">Yes</button>
-        <button id="noBtn">No</button>
+    <div id="content-wrapper">
+        <h1 id="question">Will you be my Valentine? ❤️</h1>
+        
+        <div id="gif-container"></div>
+
+        <div class="buttons" id="btnContainer">
+            <button id="yesBtn" onclick="celebrate()">Yes</button>
+            <button id="noBtn">No</button>
+        </div>
     </div>
 
     <script>
         const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const question = document.getElementById('question');
+        const btnContainer = document.getElementById('btnContainer');
+        const gifContainer = document.getElementById('gif-container');
 
-        // Function to move the button
+        // Move the "No" button on hover
         noBtn.addEventListener('mouseover', () => {
-            // Calculate random coordinates within the screen width/height
-            // Subtracting button dimensions so it doesn't go off-screen
             const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
             const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
 
@@ -78,8 +94,18 @@
         });
 
         function celebrate() {
-            alert("Yay! I knew you'd say yes! 🥰");
-            document.body.innerHTML = "<h1>Can't wait! See you on the 14th! 🌹❤️</h1>";
+            // Change the heading
+            question.innerHTML = "Yay! Best day ever! 🥰❤️";
+
+            // Hide the buttons
+            btnContainer.style.display = "none";
+
+            // Add the GIF
+            gifContainer.innerHTML = `
+                <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueGZueGZueGZueGZueGZueGZueGZueGZueGZueGZueGZueGZueCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/L2z7uicVVZq6ZfW3yV/giphy.gif" 
+                     alt="Happy Dance" 
+                     class="celebrate-gif">
+            `;
         }
     </script>
 </body>
