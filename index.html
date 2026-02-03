@@ -28,6 +28,7 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             max-width: 90%;
             width: 400px;
+            position: relative;
         }
 
         h1 {
@@ -37,9 +38,7 @@
             min-height: 60px;
         }
 
-        /* Fixed-height container ensures the 'Yes' button doesn't 
-           jump to the center when the 'No' button starts moving.
-        */
+        /* Container for buttons to handle initial spacing */
         .buttons {
             display: flex;
             justify-content: center;
@@ -48,7 +47,6 @@
             margin-top: 20px;
             min-height: 80px;
             width: 100%;
-            position: relative;
         }
 
         button {
@@ -78,8 +76,8 @@
             background-color: #9e9e9e;
             color: white;
             z-index: 10;
-            /* Transition for left/top makes the "run away" look smoother */
-            transition: left 0.15s ease-out, top 0.15s ease-out, background-color 0.2s;
+            /* Smooth sliding effect when it runs away */
+            transition: left 0.2s ease-out, top 0.2s ease-out;
         }
 
         @keyframes pulse {
@@ -89,7 +87,7 @@
         }
 
         .celebrate-gif {
-            width: 250px;
+            width: 280px;
             max-width: 100%;
             border-radius: 15px;
             margin-top: 20px;
@@ -105,6 +103,7 @@
 
     <div id="content-wrapper">
         <div id="gif-container">
+            <!-- Starting Bear GIF -->
             <img src="https://media.tenor.com/t79v889Y83UAAAAi/cute-bear.gif" class="initial-gif" alt="Cute Bear">
         </div>
         
@@ -127,7 +126,7 @@
 
         const moveButton = () => {
             if (isFirstInteraction) {
-                // Get current coordinates to prevent a huge jump on the very first frame
+                // Get current coordinates so it doesn't "teleport" instantly
                 const rect = noBtn.getBoundingClientRect();
                 noBtn.style.position = 'fixed';
                 noBtn.style.left = rect.left + 'px';
@@ -135,7 +134,7 @@
                 isFirstInteraction = false;
             }
 
-            // Calculate new random position
+            // Calculate random coordinates
             const padding = 50;
             const maxX = window.innerWidth - noBtn.offsetWidth - padding;
             const maxY = window.innerHeight - noBtn.offsetHeight - padding;
@@ -147,21 +146,21 @@
             noBtn.style.top = randomY + 'px';
         };
 
-        // Move on desktop hover
+        // Trigger move on hover (desktop)
         noBtn.addEventListener('mouseover', moveButton);
         
-        // Move on mobile touch to ensure they can't click it
+        // Trigger move on touch (mobile)
         noBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault(); // Prevents the click from firing
+            e.preventDefault(); 
             moveButton();
         });
 
         function celebrate() {
             question.innerHTML = "Yay! Best day ever! 🥰❤️";
             btnContainer.style.display = "none";
-            noBtn.style.display = "none"; // Ensure no button is gone
+            noBtn.style.display = "none";
 
-            // Updated with the Minions clapping GIF
+            // Using the Minions GIF you provided
             gifContainer.innerHTML = `
                 <img src="https://ultimateqa.com/wp-content/uploads/2018/09/2.-minions-clapping-and-super-excited-gif.gif" 
                      alt="Minions Celebrating" 
