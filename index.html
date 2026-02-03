@@ -13,65 +13,103 @@
             height: 100vh;
             margin: 0;
             background-color: #ffebee;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             text-align: center;
-            overflow: hidden; /* Prevents scrollbars when button moves */
+            overflow: hidden;
         }
 
         #content-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            max-width: 90%;
+            width: 400px;
         }
 
         h1 {
             color: #d32f2f;
-            font-size: 2.5rem;
-            margin-bottom: 30px;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            min-height: 60px;
         }
 
+        /* Fixed-height container ensures the 'Yes' button doesn't 
+           jump to the center when the 'No' button starts moving.
+        */
         .buttons {
-            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px; 
+            margin-top: 20px;
+            min-height: 80px;
             width: 100%;
-            height: 100px;
+            position: relative;
         }
 
         button {
-            font-size: 1.5rem;
-            padding: 15px 30px;
+            font-size: 1.2rem;
+            padding: 12px 28px;
             cursor: pointer;
             border: none;
-            border-radius: 10px;
-            transition: all 0.2s ease;
+            border-radius: 50px;
+            transition: transform 0.2s ease, background-color 0.2s;
+            font-weight: bold;
+            white-space: nowrap;
         }
 
         #yesBtn {
-            background-color: #4caf50;
+            background-color: #ff4081;
             color: white;
-            z-index: 1;
+            animation: pulse 1.5s infinite;
+            z-index: 2;
+        }
+
+        #yesBtn:hover {
+            background-color: #f50057;
+            transform: scale(1.1);
         }
 
         #noBtn {
-            background-color: #f44336;
+            background-color: #9e9e9e;
             color: white;
-            margin-left: 20px; 
-            position: relative;
+            z-index: 10;
+            /* Transition for left/top makes the "run away" look smoother */
+            transition: left 0.15s ease-out, top 0.15s ease-out, background-color 0.2s;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
 
         .celebrate-gif {
             width: 250px;
+            max-width: 100%;
             border-radius: 15px;
             margin-top: 20px;
+        }
+
+        .initial-gif {
+            width: 150px;
+            margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
 
     <div id="content-wrapper">
+        <div id="gif-container">
+            <img src="https://media.tenor.com/t79v889Y83UAAAAi/cute-bear.gif" class="initial-gif" alt="Cute Bear">
+        </div>
+        
         <h1 id="question">Hey Swe, Will you be my Valentine? ❤️</h1>
         
-        <div id="gif-container"></div>
-
         <div class="buttons" id="btnContainer">
             <button id="yesBtn" onclick="celebrate()">Yes</button>
             <button id="noBtn">No</button>
@@ -85,28 +123,52 @@
         const btnContainer = document.getElementById('btnContainer');
         const gifContainer = document.getElementById('gif-container');
 
-        // Move the "No" button on hover
-        noBtn.addEventListener('mouseover', () => {
-            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+        let isFirstInteraction = true;
 
-            noBtn.style.left = `${x}px`;
-            noBtn.style.top = `${y}px`;
+        const moveButton = () => {
+            if (isFirstInteraction) {
+                // Get current coordinates to prevent a huge jump on the very first frame
+                const rect = noBtn.getBoundingClientRect();
+                noBtn.style.position = 'fixed';
+                noBtn.style.left = rect.left + 'px';
+                noBtn.style.top = rect.top + 'px';
+                isFirstInteraction = false;
+            }
+
+            // Calculate new random position
+            const padding = 50;
+            const maxX = window.innerWidth - noBtn.offsetWidth - padding;
+            const maxY = window.innerHeight - noBtn.offsetHeight - padding;
+
+            const randomX = Math.max(padding, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(padding, Math.floor(Math.random() * maxY));
+
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+        };
+
+        // Move on desktop hover
+        noBtn.addEventListener('mouseover', moveButton);
+        
+        // Move on mobile touch to ensure they can't click it
+        noBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Prevents the click from firing
+            moveButton();
         });
 
         function celebrate() {
-            // Change the heading
             question.innerHTML = "Yay! Best day ever! 🥰❤️";
-
-            // Hide the buttons
             btnContainer.style.display = "none";
+            noBtn.style.display = "none"; // Ensure no button is gone
 
-            // Add the GIF
+            // Updated with the Minions clapping GIF
             gifContainer.innerHTML = `
-                <img src="https://ultimateqa.com/applitools-ignore-regions-2/2-minions-clapping-and-super-excited-gif" 
-                     alt="Happy Dance" 
+                <img src="https://ultimateqa.com/wp-content/uploads/2018/09/2.-minions-clapping-and-super-excited-gif.gif" 
+                     alt="Minions Celebrating" 
                      class="celebrate-gif">
             `;
+            
+            document.body.style.backgroundColor = "#fce4ec";
         }
     </script>
 </body>
