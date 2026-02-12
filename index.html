@@ -38,7 +38,6 @@
             min-height: 60px;
         }
 
-        /* Container for buttons to handle initial spacing */
         .buttons {
             display: flex;
             justify-content: center;
@@ -63,7 +62,6 @@
         #yesBtn {
             background-color: #ff4081;
             color: white;
-            animation: pulse 1.5s infinite;
             z-index: 2;
         }
 
@@ -76,14 +74,7 @@
             background-color: #9e9e9e;
             color: white;
             z-index: 10;
-            /* Smooth sliding effect when it runs away */
             transition: left 0.2s ease-out, top 0.2s ease-out;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
         }
 
         .celebrate-gif {
@@ -103,7 +94,6 @@
 
     <div id="content-wrapper">
         <div id="gif-container">
-            <!-- Starting Bear GIF -->
             <img src="https://media.tenor.com/t79v889Y83UAAAAi/cute-bear.gif" class="initial-gif" alt="Cute Bear">
         </div>
         
@@ -123,10 +113,31 @@
         const gifContainer = document.getElementById('gif-container');
 
         let isFirstInteraction = true;
+        let messageIndex = 0;
+        let yesScale = 1;
+
+        const messages = [
+            "No? Are you sure? 🥺",
+            "Please say yes! 🌹",
+            "Think about it again... 💭",
+            "I'll be very sad... 😢",
+            "Don't do this to me! 💔",
+            "I'll give you cookies! 🍪",
+            "Pretty please? ✨",
+            "You're breaking my heart 😭"
+        ];
 
         const moveButton = () => {
+            // Update the "No" button text
+            noBtn.innerText = messages[messageIndex];
+            messageIndex = (messageIndex + 1) % messages.length;
+
+            // Make the "Yes" button grow bigger each time
+            yesScale += 0.15;
+            yesBtn.style.transform = `scale(${yesScale})`;
+
+            // Movement logic
             if (isFirstInteraction) {
-                // Get current coordinates so it doesn't "teleport" instantly
                 const rect = noBtn.getBoundingClientRect();
                 noBtn.style.position = 'fixed';
                 noBtn.style.left = rect.left + 'px';
@@ -134,7 +145,6 @@
                 isFirstInteraction = false;
             }
 
-            // Calculate random coordinates
             const padding = 50;
             const maxX = window.innerWidth - noBtn.offsetWidth - padding;
             const maxY = window.innerHeight - noBtn.offsetHeight - padding;
@@ -146,10 +156,7 @@
             noBtn.style.top = randomY + 'px';
         };
 
-        // Trigger move on hover (desktop)
         noBtn.addEventListener('mouseover', moveButton);
-        
-        // Trigger move on touch (mobile)
         noBtn.addEventListener('touchstart', (e) => {
             e.preventDefault(); 
             moveButton();
@@ -160,7 +167,6 @@
             btnContainer.style.display = "none";
             noBtn.style.display = "none";
 
-            // Using the Minions GIF you provided
             gifContainer.innerHTML = `
                 <img src="https://ultimateqa.com/wp-content/uploads/2018/09/2.-minions-clapping-and-super-excited-gif.gif" 
                      alt="Minions Celebrating" 
